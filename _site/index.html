@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Weight Projector</title>
+
+<script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Weight Projector</h1>
+
+</div>
+
+
+<!-- Based on https://stackoverflow.com/questions/71353287/user-inputs-for-r-ggplot-or-plotly-without-shiny/71363657#71363657 -->
+<!-- Include plolty.js script -->
+<script src="https://cdn.plot.ly/plotly-2.31.1.min.js" charset="utf-8"></script>
+<!-- This is a container for your inputs -->
+<div class="input-container">
+<div class="alert">
+<p><span class="closebtn"
+onclick="this.parentElement.style.display=&#39;none&#39;;">×</span>
+<b>REMINDER!</b> This is only an estimate to help build your eating
+plan. Consult a healthcare professional before changing your routine and
+if you experience any weird symptoms (e.g., palpitations, dizziness)!
+There are a lot of factors that can influence BMR/TDEE (e.g., stress,
+exercise, sleep, health conditions), so reassess your strategy every few
+weeks. BMI is not the only metric of health, and reaching a “healthy
+weight” may not be ideal based on individual factors (again, talk to
+healthcare provider). Generally, estrogen-dominant people should stay
+above 1200 calories, and testosterone-dominant people should stay above
+1500 calories. People of any height and hormone dominance should not go
+below 1000 calories per day unless directed by their doctor. Calorie
+counting can quickly lead to disordered eating and an unhealthy
+relationship with food – if the majority of your day is focused on
+calories, exercise, or weight, stop following your plan and seek
+help.</p>
+</div>
+<div id="about" class="section level2">
+<h2>About</h2>
+<p>This site uses the equation from Mifflin MD, St Jeor ST, Hill LA,
+Scott BJ, Daugherty SA, Koh YO. A new predictive equation for resting
+energy expenditure in healthy individuals. Am J Clin Nutr.
+1990;51(2):241-247. <a href="doi:10.1093/ajcn/51.2.241"
+class="uri">doi:10.1093/ajcn/51.2.241</a></p>
+BMR Categories:
+<ul>
+<li>
+Sedentary: little to no exercise in a day
+</li>
+<li>
+Lightly active: light exercise/sports 1-3 days/week
+</li>
+<li>
+Moderately active: moderate exercise/sports 3-5 days/week
+</li>
+<li>
+Very active: hard exercise/sports 6-7 days/week
+</li>
+<li>
+Extremely active: very hard exercise/sports and physical job or 2x
+training
+</li>
+</ul>
+</div>
+<div id="user-input" class="section level2">
+<h2>User Input</h2>
+<p>
+Select measurement units:
+</p>
+<div id="measurement-buttons" class="measurement-buttons">
+<p><input type="radio" id="us" name="measurement" value="us" checked />
+<label for="us">US (lbs and in) </label></p>
+<p><input type="radio" id="metric" name="measurement" value="metric" />
+<label for="metric">Metric (kg and cm) </label></p>
+</div>
+<p>
+Select gender (based on hormone dominance):
+</p>
+<div id="gender-buttons" class="gender-buttons">
+<p><input type="radio" id="male" name="gender" value="male" />
+<label for="male">Male </label></p>
+<p><input type="radio" id="mixed" name="gender" value="mixed" checked />
+<label for="mixed">Mixed </label></p>
+<p><input type="radio" id="female" name="gender" value="female" />
+<label for="female">Female </label></p>
+</div>
+<p><label for="weight">Starting Weight:</label>
+<input type="text" id="weight" name="weight" /></p>
+<p><label for="height">Height:</label>
+<input type="text" id="height" name="height" /></p>
+<p><label for="age">Age:</label>
+<input type="text" id="age" name="age" /></p>
+<p><label for="cal_in">Average daily calories in:</label>
+<input type="text" id="calIn" name="calIn" /></p>
+<p><label for="adj">Calorie adjustment (added to BMR):</label>
+<input type="text" id="adj" name="adj" value=0 /></p>
+<p><label for="weeks">Total weeks:</label>
+<input type="text" id="weeks" name="weeks" value=120 /></p>
+</div>
+</div>
+<!-- Use 'Submit' to update the plot -->
+<p><input type='button' id='plot' value='Submit' class='btn btn-primary'></p>
+<!-- Placeholder for the plot -->
+<div id="tester" style="width:95%;height:500px;">
+
+</div>
+<!-- The JS Code -->
+<script type="text/javascript">
+
+// Get the html element that should contain the plot
+plot = document.getElementById('tester');
+
+var bedridden = 1;
+var sedentary = 1.2;
+var light = 1.375;
+var moderate = 1.55;
+var very = 1.725;
+var extreme = 1.9;
+
+var in2cm = 2.54;
+var lb2kg = 2.2;
+
+// Get array of dates
+// From https://bobbyhadz.com/blog/javascript-get-all-dates-between-two-dates
+function getDatesInRange(startDate, endDate) {
+  const date = new Date(startDate.getTime());
+
+  // Exclude start date
+  date.setDate(date.getDate() + 1);
+
+  const dates = [];
+
+  // Exclude end date
+  while (date < endDate) {
+    dates.push(new Date(date));
+    date.setDate(date.getDate() + 7);
+  }
+
+  return dates;
+}
+
+// ------- Set up functions
+
+// Calculate BMI
+function getBMI(height, weight) {
+  return weight / (height * height * 0.01 * 0.01);
+};
+
+// Equation based on: 
+// Mifflin MD, St Jeor ST, Hill LA, Scott BJ, Daugherty SA, Koh YO.
+// A new predictive equation for resting energy expenditure in healthy individuals.
+// Am J Clin Nutr. 1990;51(2):241-247. doi:10.1093/ajcn/51.2.241
+
+// Set the equation based on given gender
+function getREE(gender, weight, height, age, calIn, adj, multiplier) {
+  if ( gender === "male" ) {
+    REE = (((10 * weight) + (6.25 * height) - (5 * age)) + 5 + adj) * multiplier;
+  } else if ( gender === "female" ) {
+    REE = (((10 * weight) + (6.25 * height) - (5 * age)) - 161 + adj) * multiplier;
+  } else { // gender = "mixed"
+    REE = (((10 * weight) + (6.25 * height) - (5 * age)) - 78 + adj) * multiplier;
+  };
+  
+  // Now get the current BMI
+  BMI = getBMI(height, weight);
+  // Calculate caloric difference and weight change
+  // Negative numbers are caloric surplus, positive numbers are caloric deficit
+  // Don't go below a safe BMI!
+  if (BMI <=18.51 && calIn < REE) {
+  calIn = REE;
+  };
+  calDiff = REE - calIn;
+  newWeight = weight - ((calDiff * 7) / 7700);
+};
+
+// Calculate REE
+function calculateREEbyMultiplier (gender, weight, height, age, calIn, adj,
+timeframe, multiplier, arrREE, arrWeight, arrCalDiff, arrBMI) {
+  for (var i = 0; i < timeframe.length; i++) {
+    myweight = arrWeight[arrWeight.length - 1]
+    getREE(gender, myweight, height, age, calIn, adj, multiplier);
+    arrREE.push(REE);
+    arrWeight.push(newWeight);
+    arrCalDiff.push(calDiff);
+    arrBMI.push(BMI);
+  };
+  // Remove final weight
+  arrWeight.pop();
+  // Convert US units back to lbs
+  if ( measurement = "us") {
+    arrWeight.forEach((value, index) => {
+      arrWeight[index] *= lb2kg;
+    });
+  };  
+};
+
+// Calculate all of the updated values for button clicks
+function calculateAllREE(gender, weight, height, age, calIn, adj, timeframe,
+  bedridden, arrREEBr, arrWeightBr, arrCalDiffBr, arrBMIBr, 
+  sedentary, arrREESed, arrWeightSed, arrCalDiffSed, arrBMISed,
+  light, arrREELt, arrWeightLt, arrCalDiffLt, arrBMILt,
+  moderate, arrREEMod, arrWeightMod, arrCalDiffMod, arrBMIMod,
+  very, arrREEVery, arrWeightVery, arrCalDiffVery, arrBMIVery,
+  extreme, arrREEEx, arrWeightEx, arrCalDiffEx, arrBMIEx) {
+  
+  // Beddridden
+  calculateREEbyMultiplier (gender, weight, height, age, calIn, adj, 
+  timeframe, bedridden, arrREEBr, arrWeightBr, arrCalDiffBr, arrBMIBr);
+  
+  // Sedentary
+  calculateREEbyMultiplier (gender, weight, height, age, calIn, adj, 
+  timeframe, sedentary, arrREESed, arrWeightSed, arrCalDiffSed, arrBMISed);
+  // Light
+  calculateREEbyMultiplier (gender, weight, height, age, calIn, adj, 
+  timeframe, light, arrREELt, arrWeightLt, arrCalDiffLt, arrBMILt);
+
+  // Moderate
+  calculateREEbyMultiplier (gender, weight, height, age, calIn, adj, 
+  timeframe, moderate, arrREEMod, arrWeightMod, arrCalDiffMod, arrBMIMod);
+
+  // Very
+  calculateREEbyMultiplier (gender, weight, height, age, calIn, adj, 
+  timeframe, very, arrREEVery, arrWeightVery, arrCalDiffVery, arrBMIVery);
+
+  // Extreme
+  calculateREEbyMultiplier (gender, weight, height, age, calIn, adj, 
+  timeframe, extreme, arrREEEx, arrWeightEx, arrCalDiffEx, arrBMIEx);
+  
+  return arrREEBr, arrWeightBr, arrCalDiffBr, arrBMIBr, 
+  arrREESed, arrWeightSed, arrCalDiffSed, arrBMISed,
+  arrREELt, arrWeightLt, arrCalDiffLt, arrBMILt,
+  arrREEMod, arrWeightMod, arrCalDiffMod, arrBMIMod,
+  arrREEVery, arrWeightVery, arrCalDiffVery, arrBMIVery,
+  arrREEEx, arrWeightEx, arrCalDiffEx, arrBMIEx;
+
+};
+
+// ------ Create the plots after the click!!!!
+$("#plot").on("click", function(){
+
+// Read the values
+var measurement = document.querySelector('input[name="measurement"]:checked').value;
+var gender = document.querySelector('input[name="gender"]:checked').value;
+var height = parseInt(document.getElementById("height").value);
+var weight = parseInt(document.getElementById("weight").value);
+var age = parseInt(document.getElementById("age").value);
+var calIn = parseInt(document.getElementById("calIn").value);
+var adj = parseInt(document.getElementById("adj").value);
+var numWeeks = parseInt(document.getElementById("weeks").value);
+
+// Convert US units to kg and cm
+if ( measurement = "us") {
+  var height = height * in2cm
+  var weight = weight / lb2kg
+  weightLabel = " (lbs)"
+} else {
+  weightLabel = " (kgs)"
+};
+
+// Total number of weeks to consider
+const today = new Date();
+const future = new Date();
+future.setDate(future.getDate() + numWeeks * 7);
+
+// Make timeframe a variable
+var timeframe = getDatesInRange(today, future);
+
+// Create the empty arrays for each multiplier category
+// Bedridden
+// Initialize empty arrays
+const arrREEBr = [];
+const arrCalDiffBr = [];
+const arrWeightBr = [];
+const arrBMIBr = [];
+// Add existing values to new arrays
+arrWeightBr.push(weight);
+arrBMIBr.push(getBMI(height, weight));
+  
+// Sedentary
+// Initialize empty arrays
+const arrREESed = [];
+const arrCalDiffSed = [];
+const arrWeightSed = [];
+const arrBMISed = [];
+// Add existing values to new arrays
+arrWeightSed.push(weight);
+arrBMISed.push(getBMI(height, weight));
+
+// Light
+// Initialize empty arrays
+const arrREELt = [];
+const arrCalDiffLt = [];
+const arrWeightLt = [];
+const arrBMILt = [];
+// Add existing values to new arrays
+arrWeightLt.push(weight);
+arrBMILt.push(getBMI(height, weight));
+
+// Mod
+// Initialize empty arrays
+const arrREEMod = [];
+const arrCalDiffMod = [];
+const arrWeightMod = [];
+const arrBMIMod = [];
+// Add existing values to new arrays
+arrWeightMod.push(weight);
+arrBMIMod.push(getBMI(height, weight));
+
+// Very
+// Initialize empty arrays
+const arrREEVery = [];
+const arrCalDiffVery = [];
+const arrWeightVery = [];
+const arrBMIVery = [];
+// Add existing values to new arrays
+arrWeightVery.push(weight);
+arrBMIVery.push(getBMI(height, weight));
+  
+// Extreme
+// Initialize empty arrays
+const arrREEEx = [];
+const arrCalDiffEx = [];
+const arrWeightEx = [];
+const arrBMIEx = [];
+// Add existing values to new arrays
+arrWeightEx.push(weight);
+arrBMIEx.push(getBMI(height, weight));
+
+calculateAllREE(gender, weight, height, age, calIn, adj, timeframe, 
+  bedridden, arrREEBr, arrWeightBr, arrCalDiffBr, arrBMIBr, 
+  sedentary, arrREESed, arrWeightSed, arrCalDiffSed, arrBMISed,
+  light, arrREELt, arrWeightLt, arrCalDiffLt, arrBMILt,
+  moderate, arrREEMod, arrWeightMod, arrCalDiffMod, arrBMIMod,
+  very, arrREEVery, arrWeightVery, arrCalDiffVery, arrBMIVery,
+  extreme, arrREEEx, arrWeightEx, arrCalDiffEx, arrBMIEx);
+
+// Use date only (remove irrelevant time)
+timeframe = timeframe.map((x) => x.toLocaleDateString())
+
+// =========== Finally start ploting! ===========
+// Create an object with the default data
+// Use the Paul Tol vibrant colors https://personal.sron.nl/~pault/
+
+Plotly.newPlot(plot, {
+  data: [
+    {
+      x: timeframe,
+      y: arrWeightBr,
+      type: "scatter",
+      xaxis: "x",
+      yaxis: "y",
+      name: "Bedridden Weight",
+      marker: {color: '#ee3377'}
+    },
+    {
+      x: timeframe,
+      y: arrWeightSed,
+      type: "scatter",
+      xaxis: "x",
+      yaxis: "y",
+      name: "Sedentary Weight",
+      marker: {color: '#cc3311'}
+    },
+    {
+      x: timeframe,
+      y: arrWeightLt,
+      type: "scatter",
+      xaxis: "x",
+      yaxis: "y",
+      name: "Lightly Active Weight",
+      marker: {color: '#ee7733'}
+    },
+    {
+      x: timeframe,
+      y: arrWeightMod,
+      type: "scatter",
+      xaxis: "x",
+      yaxis: "y",
+      name: "Moderately Active Weight",
+      marker: {color: '#009988'}
+    },
+    {
+      x: timeframe,
+      y: arrWeightVery,
+      type: "scatter",
+      xaxis: "x",
+      yaxis: "y",
+      name: "Very Active Weight",
+      marker: {color: '#33bbee'}
+    },
+    {
+      x: timeframe,
+      y: arrWeightEx,
+      type: "scatter",
+      xaxis: "x",
+      yaxis: "y",
+      name: "Extremely Active Weight",
+      marker: {color: '#0077BB'}
+    },
+    // Line marking healthy BMI category
+    {
+      x: [timeframe[0], timeframe[timeframe.length-1]],
+      y: [18.5, 18.5],
+      type: "scatter",
+      xaxis: "x",
+      yaxis: "y2",
+      name: "Healthy BMI Range Min",
+      marker: {color: '#d3d3d3'}
+    },
+    // Line marking healthy BMI category
+    {
+      x: [timeframe[0], timeframe[timeframe.length-1]],
+      y: [25, 25],
+      type: "scatter",
+      xaxis: "x",
+      yaxis: "y2",
+      name: "Healthy BMI Range Max",
+      marker: {color: '#d3d3d3'}
+    },
+    {
+      x: timeframe,
+      y: arrBMIBr,
+      type: "scatter",
+      xaxis: "x",
+      yaxis: "y2",
+      name: "Bedridden BMI",
+      marker: {color: '#ee3377'}
+    },
+    {
+      x: timeframe,
+      y: arrBMISed,
+      type: "scatter",
+      xaxis: "x",
+      yaxis: "y2",
+      name: "Sedentary BMI",
+      marker: {color: '#cc3311'}
+    },
+    {
+      x: timeframe,
+      y: arrBMILt,
+      type: "scatter",
+      xaxis: "x",
+      yaxis: "y2",
+      name: "Lightly Active BMI",
+      marker: {color: '#ee7733'}
+    },
+    {
+      x: timeframe,
+      y: arrBMIMod,
+      type: "scatter",
+      xaxis: "x",
+      yaxis: "y2",
+      name: "Moderately Active BMI",
+      marker: {color: '#009988'}
+    },
+    {
+      x: timeframe,
+      y: arrBMIVery,
+      type: "scatter",
+      xaxis: "x",
+      yaxis: "y2",
+      name: "Very Active BMI",
+      marker: {color: '#33bbee'}
+    },
+    {
+      x: timeframe,
+      y: arrBMIEx,
+      type: "scatter",
+      xaxis: "x",
+      yaxis: "y2",
+      name: "Extremely Active BMI",
+      marker: {color: '#0077BB'}
+    },
+  ],
+
+  layout: {
+    grid: {rows: 2, columns: 1, roworder: "top to bottom"},
+    yaxis: { title: ('Weight'+ weightLabel) },
+    yaxis2: { anchor: "x2", title: "BMI (kg/m<sup>2</sup>)" },
+  }
+});
+
+})
+</script>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+name: "Weight Projecter"
+#output_dir: "."
+output_dir: "_site"
+#navbar: _navbar.html
+#navbar:
+
+output:
+  html_document:
+    theme: cosmo
+    css: 'style.css'
+#    highlight: textmate
+#    include:
+#      in_header: header.html
+#      after_body: footer.html
+#    css: styles.css

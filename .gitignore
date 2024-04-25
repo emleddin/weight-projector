@@ -1,0 +1,10 @@
+#.DS_STORE
+**/.DS_Store
+.Rproj.user
+.Rproj.user/*
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+default.profraw
+
