@@ -9,6 +9,18 @@ editor_options:
 <!-- Include plolty.js script -->
 <script src="https://cdn.plot.ly/plotly-2.31.1.min.js" charset="utf-8"></script>
 
+<!-- Include DataTables script -->
+<script src="https://cdn.datatables.net/2.0.5/js/dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.min.css">
+
+<!-- Include DataTables ColReorder -->
+<script src="https://cdn.datatables.net/colreorder/2.0.1/js/dataTables.colReorder.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/colreorder/2.0.1/css/colReorder.dataTables.min.css">
+
+<!-- Include DataTables Responsive -->
+<script src="https://cdn.datatables.net/responsive/3.0.2/js/dataTables.responsive.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.2/css/responsive.dataTables.min.css">
+
 <!-- This is a container for your inputs -->
 
 :::{.input-container}
@@ -153,7 +165,7 @@ function getREE(gender, weight, height, age, calIn, adj, multiplier) {
   // Calculate caloric difference and weight change
   // Negative numbers are caloric surplus, positive numbers are caloric deficit
   // Don't go below a safe BMI!
-  if (BMI <=18.51 && calIn < REE) {
+  if (BMI <=18.60 && calIn < REE) {
   calIn = REE;
   };
   calDiff = REE - calIn;
@@ -161,8 +173,8 @@ function getREE(gender, weight, height, age, calIn, adj, multiplier) {
 };
 
 // Calculate REE
-function calculateREEbyMultiplier (gender, weight, height, age, calIn, adj,
-timeframe, multiplier, arrREE, arrWeight, arrCalDiff, arrBMI) {
+function calculateREEbyMultiplier (measurement, gender, weight, height, age, 
+calIn, adj,timeframe, multiplier, arrREE, arrWeight, arrCalDiff, arrBMI) {
   for (var i = 0; i < timeframe.length; i++) {
     myweight = arrWeight[arrWeight.length - 1]
     getREE(gender, myweight, height, age, calIn, adj, multiplier);
@@ -174,7 +186,7 @@ timeframe, multiplier, arrREE, arrWeight, arrCalDiff, arrBMI) {
   // Remove final weight
   arrWeight.pop();
   // Convert US units back to lbs
-  if ( measurement = "us") {
+  if ( measurement === "us") {
     arrWeight.forEach((value, index) => {
       arrWeight[index] *= lb2kg;
     });
@@ -182,7 +194,8 @@ timeframe, multiplier, arrREE, arrWeight, arrCalDiff, arrBMI) {
 };
 
 // Calculate all of the updated values for button clicks
-function calculateAllREE(gender, weight, height, age, calIn, adj, timeframe,
+function calculateAllREE(measurement, gender, weight, height, age, 
+  calIn, adj, timeframe,
   bedridden, arrREEBr, arrWeightBr, arrCalDiffBr, arrBMIBr, 
   sedentary, arrREESed, arrWeightSed, arrCalDiffSed, arrBMISed,
   light, arrREELt, arrWeightLt, arrCalDiffLt, arrBMILt,
@@ -191,26 +204,26 @@ function calculateAllREE(gender, weight, height, age, calIn, adj, timeframe,
   extreme, arrREEEx, arrWeightEx, arrCalDiffEx, arrBMIEx) {
   
   // Beddridden
-  calculateREEbyMultiplier (gender, weight, height, age, calIn, adj, 
+  calculateREEbyMultiplier (measurement, gender, weight, height, age, calIn, adj, 
   timeframe, bedridden, arrREEBr, arrWeightBr, arrCalDiffBr, arrBMIBr);
   
   // Sedentary
-  calculateREEbyMultiplier (gender, weight, height, age, calIn, adj, 
+  calculateREEbyMultiplier (measurement, gender, weight, height, age, calIn, adj, 
   timeframe, sedentary, arrREESed, arrWeightSed, arrCalDiffSed, arrBMISed);
   // Light
-  calculateREEbyMultiplier (gender, weight, height, age, calIn, adj, 
+  calculateREEbyMultiplier (measurement, gender, weight, height, age, calIn, adj, 
   timeframe, light, arrREELt, arrWeightLt, arrCalDiffLt, arrBMILt);
 
   // Moderate
-  calculateREEbyMultiplier (gender, weight, height, age, calIn, adj, 
+  calculateREEbyMultiplier (measurement, gender, weight, height, age, calIn, adj, 
   timeframe, moderate, arrREEMod, arrWeightMod, arrCalDiffMod, arrBMIMod);
 
   // Very
-  calculateREEbyMultiplier (gender, weight, height, age, calIn, adj, 
+  calculateREEbyMultiplier (measurement, gender, weight, height, age, calIn, adj, 
   timeframe, very, arrREEVery, arrWeightVery, arrCalDiffVery, arrBMIVery);
 
   // Extreme
-  calculateREEbyMultiplier (gender, weight, height, age, calIn, adj, 
+  calculateREEbyMultiplier (measurement, gender, weight, height, age, calIn, adj, 
   timeframe, extreme, arrREEEx, arrWeightEx, arrCalDiffEx, arrBMIEx);
   
   return arrREEBr, arrWeightBr, arrCalDiffBr, arrBMIBr, 
@@ -236,12 +249,12 @@ var adj = parseInt(document.getElementById("adj").value);
 var numWeeks = parseInt(document.getElementById("weeks").value);
 
 // Convert US units to kg and cm
-if ( measurement = "us") {
+if ( measurement === "us") {
   var height = height * in2cm
   var weight = weight / lb2kg
-  weightLabel = " (lbs)"
+  var weightLabel = " (lbs)"
 } else {
-  weightLabel = " (kgs)"
+  var weightLabel = " (kgs)"
 };
 
 // Total number of weeks to consider
@@ -313,7 +326,7 @@ const arrBMIEx = [];
 arrWeightEx.push(weight);
 arrBMIEx.push(getBMI(height, weight));
 
-calculateAllREE(gender, weight, height, age, calIn, adj, timeframe, 
+calculateAllREE(measurement, gender, weight, height, age, calIn, adj, timeframe, 
   bedridden, arrREEBr, arrWeightBr, arrCalDiffBr, arrBMIBr, 
   sedentary, arrREESed, arrWeightSed, arrCalDiffSed, arrBMISed,
   light, arrREELt, arrWeightLt, arrCalDiffLt, arrBMILt,
@@ -336,7 +349,7 @@ Plotly.newPlot(plot, {
       type: "scatter",
       xaxis: "x",
       yaxis: "y",
-      name: "Bedridden Weight",
+      name: "Bedridden",
       marker: {color: '#ee3377'}
     },
     {
@@ -345,7 +358,7 @@ Plotly.newPlot(plot, {
       type: "scatter",
       xaxis: "x",
       yaxis: "y",
-      name: "Sedentary Weight",
+      name: "Sedentary",
       marker: {color: '#cc3311'}
     },
     {
@@ -354,7 +367,7 @@ Plotly.newPlot(plot, {
       type: "scatter",
       xaxis: "x",
       yaxis: "y",
-      name: "Lightly Active Weight",
+      name: "Lightly Active",
       marker: {color: '#ee7733'}
     },
     {
@@ -363,7 +376,7 @@ Plotly.newPlot(plot, {
       type: "scatter",
       xaxis: "x",
       yaxis: "y",
-      name: "Moderately Active Weight",
+      name: "Moderately Active",
       marker: {color: '#009988'}
     },
     {
@@ -372,7 +385,7 @@ Plotly.newPlot(plot, {
       type: "scatter",
       xaxis: "x",
       yaxis: "y",
-      name: "Very Active Weight",
+      name: "Very Active",
       marker: {color: '#33bbee'}
     },
     {
@@ -381,27 +394,28 @@ Plotly.newPlot(plot, {
       type: "scatter",
       xaxis: "x",
       yaxis: "y",
-      name: "Extremely Active Weight",
+      name: "Extremely Active",
       marker: {color: '#0077BB'}
     },
-    // Line marking healthy BMI category
+    // Line marking healthy BMI category (min)
     {
       x: [timeframe[0], timeframe[timeframe.length-1]],
       y: [18.5, 18.5],
       type: "scatter",
       xaxis: "x",
       yaxis: "y2",
-      name: "Healthy BMI Range Min",
+      name: "Healthy BMI Range",
       marker: {color: '#d3d3d3'}
     },
-    // Line marking healthy BMI category
+    // Line marking healthy BMI category (max)
     {
       x: [timeframe[0], timeframe[timeframe.length-1]],
       y: [25, 25],
       type: "scatter",
       xaxis: "x",
       yaxis: "y2",
-      name: "Healthy BMI Range Max",
+      name: "Healthy BMI Range",
+      showlegend: false,
       marker: {color: '#d3d3d3'}
     },
     {
@@ -411,6 +425,7 @@ Plotly.newPlot(plot, {
       xaxis: "x",
       yaxis: "y2",
       name: "Bedridden BMI",
+      showlegend: false,
       marker: {color: '#ee3377'}
     },
     {
@@ -420,6 +435,7 @@ Plotly.newPlot(plot, {
       xaxis: "x",
       yaxis: "y2",
       name: "Sedentary BMI",
+      showlegend: false,
       marker: {color: '#cc3311'}
     },
     {
@@ -429,6 +445,7 @@ Plotly.newPlot(plot, {
       xaxis: "x",
       yaxis: "y2",
       name: "Lightly Active BMI",
+      showlegend: false,
       marker: {color: '#ee7733'}
     },
     {
@@ -438,6 +455,7 @@ Plotly.newPlot(plot, {
       xaxis: "x",
       yaxis: "y2",
       name: "Moderately Active BMI",
+      showlegend: false,
       marker: {color: '#009988'}
     },
     {
@@ -447,6 +465,7 @@ Plotly.newPlot(plot, {
       xaxis: "x",
       yaxis: "y2",
       name: "Very Active BMI",
+      showlegend: false,
       marker: {color: '#33bbee'}
     },
     {
@@ -456,6 +475,7 @@ Plotly.newPlot(plot, {
       xaxis: "x",
       yaxis: "y2",
       name: "Extremely Active BMI",
+      showlegend: false,
       marker: {color: '#0077BB'}
     },
   ],
@@ -467,5 +487,132 @@ Plotly.newPlot(plot, {
   }
 });
 
+// Work on a table now!
+const maxSize = Math.max(timeframe.length, 
+  arrWeightBr.length, arrBMIBr.length, arrREEBr.length, arrCalDiffBr.length,
+  arrWeightSed.length, arrBMISed.length, arrREESed.length, arrCalDiffSed.length,
+  arrWeightLt.length, arrBMILt.length, arrREELt.length, arrCalDiffLt.length,
+  arrWeightMod.length, arrBMIMod.length, arrREEMod.length, arrCalDiffMod.length,
+  arrWeightVery.length,  arrBMIVery.length, arrREEVery.length,
+  arrCalDiffVery.length,
+  arrWeightEx.length, arrBMIEx.length, arrREEEx.length, arrCalDiffEx.length,
+ );
+
+for (let i = 0; i < maxSize; i++) {
+  let row = $('<tr>');
+  row.append($('<td>').html(i));
+  row.append($('<td>').html(timeframe[i]));
+  // Bedridden
+  row.append($('<td>').html(arrWeightBr[i].toFixed(1)));
+  row.append($('<td>').html(arrBMIBr[i].toFixed(1)));
+  row.append($('<td>').html(arrREEBr[i].toFixed(0)));
+  row.append($('<td>').html(arrCalDiffBr[i].toFixed(0)));
+  // Sedentary
+  row.append($('<td>').html(arrWeightSed[i].toFixed(1)));
+  row.append($('<td>').html(arrBMISed[i].toFixed(1)));
+  row.append($('<td>').html(arrREESed[i].toFixed(0)));
+  row.append($('<td>').html(arrCalDiffSed[i].toFixed(0)));
+  // Light
+  row.append($('<td>').html(arrWeightLt[i].toFixed(1)));
+  row.append($('<td>').html(arrBMILt[i].toFixed(1)));
+  row.append($('<td>').html(arrREELt[i].toFixed(0)));
+  row.append($('<td>').html(arrCalDiffLt[i].toFixed(0)));
+  // Mod
+  row.append($('<td>').html(arrWeightMod[i].toFixed(1)));
+  row.append($('<td>').html(arrBMIMod[i].toFixed(1)));
+  row.append($('<td>').html(arrREEMod[i].toFixed(0)));
+  row.append($('<td>').html(arrCalDiffMod[i].toFixed(0)));
+  // Very
+  row.append($('<td>').html(arrWeightVery[i].toFixed(1)));
+  row.append($('<td>').html(arrBMIVery[i].toFixed(1)));
+  row.append($('<td>').html(arrREEVery[i].toFixed(0)));
+  row.append($('<td>').html(arrCalDiffVery[i].toFixed(0)));
+  // Extreme
+  row.append($('<td>').html(arrWeightEx[i].toFixed(1)));
+  row.append($('<td>').html(arrBMIEx[i].toFixed(1)));
+  row.append($('<td>').html(arrREEEx[i].toFixed(0)));
+  row.append($('<td>').html(arrCalDiffEx[i].toFixed(0)));
+  
+  $('#table-content').append(row);
+};
+
 })
+```
+
+<!-- Use 'Submit' to update the plot -->
+<br>
+<center>
+<input type='button' id='showtable' value='Toggle Table' class='btn btn-primary'>
+</center>
+
+<!-- Placeholder for the table -->
+<div id="table-test" style="width:95%;">
+  <table id="progress-table">
+    <thead>
+      <tr>
+        <th scope="col">Week</th>
+        <th scope="col">Date</th>
+        <th colspan="4">Bedridden</th>
+        <th colspan="4">Sedentary</th>
+        <th colspan="4">Lightly Active</th>
+        <th colspan="4">Moderately Active</th>
+        <th colspan="4">Very Active</th>
+        <th colspan="4">Extremely Active</th>
+      </tr>
+      <tr>
+        <!-- Bedridden -->
+        <th scope="col">Weight</th>
+        <th scope="col">BMI</th>
+        <th scope="col">Calories Used</th>
+        <th scope="col">Calorie Difference</th>
+        <!-- Sedentary -->
+        <th scope="col">Weight</th>
+        <th scope="col">BMI</th>
+        <th scope="col">Calories Used</th>
+        <th scope="col">Calorie Difference</th>
+        <!-- Light -->
+        <th scope="col">Weight</th>
+        <th scope="col">BMI</th>
+        <th scope="col">Calories Used</th>
+        <th scope="col">Calorie Difference</th>
+        <!-- Mod -->
+        <th scope="col">Weight</th>
+        <th scope="col">BMI</th>
+        <th scope="col">Calories Used</th>
+        <th scope="col">Calorie Difference</th>
+        <!-- Very -->
+        <th scope="col">Weight</th>
+        <th scope="col">BMI</th>
+        <th scope="col">Calories Used</th>
+        <th scope="col">Calorie Difference</th>
+        <!-- Extreme -->
+        <th scope="col">Weight</th>
+        <th scope="col">BMI</th>
+        <th scope="col">Calories Used</th>
+        <th scope="col">Calorie Difference</th>
+      </tr>
+    </thead>
+    <tbody id="table-content">
+    </tbody>
+  </table>
+</div>
+
+```{js, echo=FALSE}
+// Start by creating the table
+$('#progress-table').DataTable(
+  { "aLengthMenu": [[25, 50, 75, -1], [25, 50, 75, "All"]],
+  "pageLength": 25,
+  stateSave: true,
+  "bDestroy": true,
+  });
+
+// Now toggle the Table on and off
+$("#showtable").on("click", function(){
+  var x = document.getElementById("table-test");
+  if (x.style.display === "none") {
+    x.style.display = "flex";
+  } else {
+    x.style.display = "none";
+  };
+});
 ```
