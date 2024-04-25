@@ -184,7 +184,13 @@ pre code {
 <p><link rel="stylesheet" href="https://cdn.datatables.net/colreorder/2.0.1/css/colReorder.dataTables.min.css"></p>
 <!-- Include DataTables Responsive -->
 <script src="https://cdn.datatables.net/responsive/3.0.2/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/3.0.2/js/responsive.dataTables.js"></script>
 <p><link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.2/css/responsive.dataTables.min.css"></p>
+<!-- Include DataTables ColVis -->
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.colVis.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js"></script>
+<p><link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.dataTables.css"></p>
 <!-- This is a container for your inputs -->
 <div class="input-container">
 <div class="alert">
@@ -720,10 +726,10 @@ for (let i = 0; i < maxSize; i++) {
 <table id="progress-table">
 <thead>
 <tr>
-<th scope="col">
+<th rowspan="2" width="15%">
 Week
 </th>
-<th scope="col">
+<th rowspan="2" width="15%">
 Date
 </th>
 <th colspan="4">
@@ -832,11 +838,62 @@ Calorie Difference
 </div>
 <script type="text/javascript">
 // Start by creating the table
-$('#progress-table').DataTable(
-  { "aLengthMenu": [[25, 50, 75, -1], [25, 50, 75, "All"]],
+// Consider following this in the future https://datatables.net/forums/discussion/68846/is-there-a-way-to-toggle-the-colvisgroup-button
+$('#progress-table').DataTable({ 
+  "aLengthMenu": [[25, 50, 75, -1], [25, 50, 75, "All"]],
   "pageLength": 25,
   stateSave: true,
   "bDestroy": true,
+  layout: {
+        topStart: {
+            buttons: [
+              {
+                extend: 'colvisGroup',
+                    text: 'Bedridden',
+                    name: 'Bedridden',
+                    // 0 is Week index, always want to show
+                    show: [1, 2, 3, 4, 5],
+                    hide: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                           19, 20, 21, 22, 23, 24, 25],
+                },
+                                {
+                extend: 'colvisGroup',
+                    text: 'Sedentary',
+                    show: [1, 6, 7, 8, 9],
+                    hide: [2, 3, 4, 5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+                },
+                {
+                extend: 'colvisGroup',
+                    text: 'Lightly Active',
+                    show: [1, 10, 11, 12, 13],
+                    hide: [2, 3, 4, 5, 6, 7, 8, 9, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+                },
+                {
+                extend: 'colvisGroup',
+                    text: 'Moderately Active',
+                    show: [1, 14, 15, 16, 17],
+                    hide: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 18, 19, 20, 21, 22, 23, 24, 25]
+                },
+                {
+                extend: 'colvisGroup',
+                    text: 'Very Active',
+                    show: [1, 18, 19, 20, 21],
+                    hide: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 22, 23, 24, 25]
+                },
+                {
+                extend: 'colvisGroup',
+                    text: 'Extremely Active',
+                    show: [1, 22, 23, 24, 25],
+                    hide: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+                },
+                {
+                    extend: 'colvisGroup',
+                    text: 'Show all',
+                    show: ':hidden'
+                }
+            ]
+        }
+    }
   });
 
 // Now toggle the Table on and off
