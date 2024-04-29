@@ -407,6 +407,18 @@ button.dt-button, div.dt-button, a.dt-button, input.dt-button {
  color: black;
 }
 
+/* DT Button dropdown */
 div.dt-button-collection .dt-button {
   color: black !important;
 }
+
+/* DT Button dropdown */
+div.dt-button-collection {
+  width: 385px !important;
+}
+
+table#BMI-table-content td, th {
+  padding-left: 15px;
+  padding-right: 15px;
+  text-align: center;
+} 
