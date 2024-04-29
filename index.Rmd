@@ -533,7 +533,7 @@ var BMItableData = [
         { field1: 'Underweight', field2: '< 18.5', field3: '< '+underweight.toFixed(1) },
         { field1: 'Healthy weight', field2: '18.5 &ndash; 25.0', field3: healthy.toFixed(1)+' &ndash; '+overweight.toFixed(1) },
         { field1: 'Overweight', field2: '25.0 &ndash; 30.0', field3: overweight.toFixed(1)+' &ndash; '+obese_1.toFixed(1) },
-        { field1: 'Obese Class 1', field2: '30.0 &ndash; 25.0', field3: obese_1.toFixed(1)+' &ndash; '+obese_2.toFixed(1) },
+        { field1: 'Obese Class 1', field2: '30.0 &ndash; 35.0', field3: obese_1.toFixed(1)+' &ndash; '+obese_2.toFixed(1) },
         { field1: 'Obese Class 2', field2: '35.0 &ndash; 40.0', field3: obese_2.toFixed(1)+' &ndash; '+obese_3.toFixed(1) },
         { field1: 'Obese Class 3', field2: '> 40.0', field3: '> '+obese_3.toFixed(1) }
         ];
@@ -560,8 +560,9 @@ function writetable() {
     height_line_text += ' inches:';
   } else {
     height_line_text += height.toFixed(2);
-    height_line_text +=  'centimeters:';
+    height_line_text +=  ' centimeters:';
   };
+  //height_line_text +=  '';
   $('#insert-height-line').html(height_line_text);
   
 };
@@ -627,8 +628,9 @@ for (let i = 0; i < maxSize; i++) {
 <br>
 
 <!-- Insert the BMI chart -->
-<div id="table-test">
+<div id="bmi-table-test">
   <center id="insert-height-line"></center>
+  <br>
   <center>
   <table id="BMI-table-content" style="box-sizing: border-box;">
   </table>
@@ -730,49 +732,6 @@ $('#progress-table').DataTable({
                         }
                     }
                 }
-              /* {
-                extend: 'colvisGroup',
-                    text: 'REE',
-                    name: 'Resting Energy Expenditure',
-                    // 0 is Week index, always want to show
-                    show: [1, 2, 3, 4, 5],
-                    hide: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-                },
-                                {
-                extend: 'colvisGroup',
-                    text: 'Sedentary',
-                    show: [1, 6, 7, 8, 9],
-                    hide: [2, 3, 4, 5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
-                },
-                {
-                extend: 'colvisGroup',
-                    text: 'Lightly Active',
-                    show: [1, 10, 11, 12, 13],
-                    hide: [2, 3, 4, 5, 6, 7, 8, 9, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
-                },
-                {
-                extend: 'colvisGroup',
-                    text: 'Moderately Active',
-                    show: [1, 14, 15, 16, 17],
-                    hide: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 18, 19, 20, 21, 22, 23, 24, 25]
-                },
-                {
-                extend: 'colvisGroup',
-                    text: 'Very Active',
-                    show: [1, 18, 19, 20, 21],
-                    hide: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 22, 23, 24, 25]
-                },
-                {
-                extend: 'colvisGroup',
-                    text: 'Extremely Active',
-                    show: [1, 22, 23, 24, 25],
-                    hide: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
-                },
-                {
-                    extend: 'colvisGroup',
-                    text: 'Show all',
-                    show: ':hidden'
-                } */
             ]
         }
     }
@@ -780,6 +739,9 @@ $('#progress-table').DataTable({
 
 // Now toggle the Table on and off
 $("#showtable").on("click", function(){
+
+  $('#progress-table').DataTable().ajax.reload();
+
   var x = document.getElementById("table-test");
   if (x.style.display === "none") {
     x.style.display = "flex";
